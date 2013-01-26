@@ -1,10 +1,30 @@
-mypy stub generator
+Mypy stub generator
 ===================
+
+Mypy requires stub files describing the interfaces of modules
+in order to type-check code that uses them. Writing them is quite tedious
+so here are some tools to help:
+
+*   `stub.py` generates a dynamically typed stub file for a named
+    module
+
+*   `lsmod.py` gets a list of modules to stub by scraping the module
+    index page on docs.python.org (not ideal, I know)
+
+Requirements
+------------
+
+*   CPython version 3
+*   Beautiful Soup version 4 if you want to run `lsmod.py`
+    (get with `pip install beautifulsoup4`
+           or `apt-get install python3-bs4`)
+
+Usage
+-----
 
 Here's roughly what I did to get a mostly working set of stubs.
 
-Get a list of modules to stub by scraping the module index page
-on docs.python.org (not ideal, I know):
+Decide what to stub:
 
     python3 lsmod.py > modules.txt
 
