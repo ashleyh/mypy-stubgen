@@ -38,19 +38,21 @@ class Outputter:
         self.comment(repr(value))
 
 
-def get_class_name(class_):
-    return class_.__name__
-
-
-def get_bases_string(class_):
-    # XXX: doesn't work if a base is from another package!
-
+def get_base_info(class_):
     bases = class_.__bases__
 
     if len(bases) == 1 and bases[0] == object:
-        return ''
+        return [], ''
     else:
-        return '(' + ', '.join(get_class_name(base) for base in bases) + ')'
+        imports = set()
+        base_names = []
+        for base in bases:
+            if base.__module__ == class_.__module__:
+                base_names.append(base.__name__)
+            else:
+                imports.add(base.__module__)
+                base_names.append(base.__module__ + '.' + base.__name__)
+        return imports, '({})'.format(', '.join(base_names))
 
 
 def is_inherited(class_, member):
@@ -62,7 +64,9 @@ def is_inherited(class_, member):
 
 def stub_class(name, class_, out):
     out.doc(inspect.getdoc(class_))
-    bases = get_bases_string(class_)
+    imports, bases = get_base_info(class_)
+    for import_ in imports:
+        out.line('import {}'.format(import_))
     out.line('class {}{}:'.format(name, bases))
     out = out.indent()
 
